@@ -12,4 +12,9 @@ class Repository extends Model
     {
         return $this->hasOne(LastCommit::class);
     }
+    
+    public function lastRelease()
+    {
+        return $this->hasOne(LastRelease::class);
+    }
 }

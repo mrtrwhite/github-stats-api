@@ -58,6 +58,8 @@ class ImportRepos extends Job
                     );
 
                     dispatch(new ImportCommits($repository, $repo['commits_url']));
+                    
+                    dispatch(new ImportReleases($repository, $repo['releases_url']));
                 });
         } catch (ClientException $e) {
             $statusCode = $e->getResponse()->getStatusCode();

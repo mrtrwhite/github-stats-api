@@ -10,8 +10,8 @@ class GithubService {
     public function __construct()
     {
         $this->auth = [
-            'eb68dd6a4102f999f2c1',
-            '55be329ad7e2ae7cce6f83b5a1e785c6063646f4'
+            env('GITHUB_CLIENT_ID'),
+            env('GITHUB_CLIENT_SECRET')
         ];
     }
 
@@ -60,6 +60,19 @@ class GithubService {
         }
 
         return $data;
+    }
+    
+    public function getLatestRelease($url)
+    {
+        $client = new Client();
+
+        $url = str_replace('{/id}', '/latest', $url);
+
+        $res = $client->request('GET', $url, [
+            'auth' => $this->auth
+        ]);
+
+        return json_decode($res->getBody(), true);
     }
 
     public function writeToFile($file, $json)
