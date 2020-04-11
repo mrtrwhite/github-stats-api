@@ -29,6 +29,9 @@ class DispatchImports extends Command {
      */
     public function handle()
     {
-        dispatch(new ImportRepos());
+        // 1000 results/30 per page = 34
+        for($i=0;$i<=34;$i++) {
+            dispatch(new ImportRepos($i));
+        }
     }
 }

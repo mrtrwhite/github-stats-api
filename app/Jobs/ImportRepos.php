@@ -2,13 +2,19 @@
 
 namespace App\Jobs;
 
+use GuzzleHttp\Exception\ClientException;
+
 use Illuminate\Support\Facades\DB;
 
 use App\Services\GithubService;
 
+use App\Repository;
+
 class ImportRepos extends Job
 {
     public $page;
+
+    public $tries = 1;
 
     /**
      * Create a new job instance.
@@ -27,19 +33,17 @@ class ImportRepos extends Job
      */
     public function handle(GithubService $githubService)
     {
-        $repos = $githubService->getRepositories($this->page);
+        try {
+            $repos = $githubService->getRepositories($this->page);
 
-        $formattedRepos = collect($repos)
-            ->each(function($repo) {
-                DB::table('repositories')
-                    ->updateOrInsert(
+            collect($repos)
+                ->each(function($repo) {                
+                    $repository = Repository::updateOrCreate(
                         [
                             'github_id'             => $repo['id'],
                             'name'                  => $repo['name']
                         ],
                         [
-                            'github_id'             => $repo['id'],
-                            'name'                  => $repo['name'],
                             'full_name'             => $repo['full_name'],
                             'description'           => $repo['description'] ?? '',
                             'url'                   => $repo['url'],
@@ -52,6 +56,16 @@ class ImportRepos extends Job
                             'updated_at'            => \Carbon\Carbon::now()
                         ]
                     );
-            });
+
+                    dispatch(new ImportCommits($repository, $repo['commits_url']));
+                });
+        } catch (ClientException $e) {
+            $statusCode = $e->getResponse()->getStatusCode();
+
+            if($statusCode === 403) {
+                $job = (new self($this->page))->delay(60);
+                dispatch($job);
+            }
+        }
     }
 }

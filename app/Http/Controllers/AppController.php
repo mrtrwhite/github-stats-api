@@ -2,11 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use DateTime;
-
-use App\Exceptions\NoItemsException;
-
-use App\Services\GithubService;
+use App\Repository;
 
 class AppController extends Controller
 {
@@ -20,36 +16,25 @@ class AppController extends Controller
     public function __construct()
     {
         $this->middleware('cors');
-
-        $this->githubService = new GithubService();
     }
 
     public function index()
-    {
-        try {
-            $items = $this->githubService->getRepositories();
+    {            
+        $data = Repository::with('lastCommit')
+            ->orderBy('stars', 'DESC')
+            ->limit(1000)
+            ->get()
+            ->map(function($repo) {
+                return [
+                    'name'                  => $repo->full_name,
+                    'stars'                 => $repo->stars,
+                    'forks'                 => $repo->forks,
+                    'lastCommit'            => $repo->lastCommit,
+                    'lastCommitDate'        => $repo->lastCommit->commit_author_date->format('Y-m-d H:i:s'),
+                    'lastCommitTimestamp'   => $repo->lastCommit->commit_author_date->getTimestamp()
+                ];
+            });
 
-            // $data = collect($items)->map(function($item) {
-            //     $commits = $this->githubService->getCommits($item['commits_url']);
-
-            //     return [
-            //         'name'                  => $item['full_name'],
-            //         'stars'                 => $item['stargazers_count'],
-            //         'forks'                 => $item['forks_count'],
-            //         'lastCommit'            => $commits[0],
-            //         'lastCommitDate'        => $commits[0]['commit']['committer']['date'],
-            //         'lastCommitTimestamp'   => (new DateTime($commits[0]['commit']['committer']['date']))->getTimestamp()
-            //     ];
-            // });
-
-            // $this->writeToFile(storage_path('app/data2.json'), json_encode($data));
-
-            $data = json_decode(file_get_contents(storage_path('app/data2.json')), true);
-
-            return $data;
-
-        } catch (\Exception $e) {
-            dd($e);
-        }
+        return $data;
     }
 }

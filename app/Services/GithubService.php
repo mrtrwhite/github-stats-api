@@ -53,7 +53,13 @@ class GithubService {
             ]
         ]);
 
-        return json_decode($res->getBody(), true);
+        $data = json_decode($res->getBody(), true);
+
+        if(empty($data)) {
+            throw new NoItemsException();
+        }
+
+        return $data;
     }
 
     public function writeToFile($file, $json)
