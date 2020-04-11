@@ -21,7 +21,7 @@ class AppController extends Controller
     }
 
     public function index()
-    {                       
+    {             
         return Cache::remember('index', 360, function() {
             return Repository::with('lastCommit')
                 ->orderBy('stars', 'DESC')
