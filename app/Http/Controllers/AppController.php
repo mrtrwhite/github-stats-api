@@ -6,6 +6,8 @@ use App\Repository;
 
 use Illuminate\Support\Facades\Cache;
 
+use App\Http\Resources\APIResource;
+
 class AppController extends Controller
 {
     protected $githubService;
@@ -21,25 +23,19 @@ class AppController extends Controller
     }
 
     public function index()
-    {             
+    {                 
         return Cache::remember('index', 360, function() {
-            return Repository::with('lastCommit')
+            $data = Repository::with(['lastCommit', 'lastRelease'])
                 ->orderBy('stars', 'DESC')
                 ->limit(1000)
-                ->get()
-                ->map(function($repo) {
-                    return [
-                        'name'                  => $repo->full_name,
-                        'stars'                 => $repo->stars,
-                        'forks'                 => $repo->forks,
-                        'lastCommit'            => $repo->lastCommit->message,
-                        'lastCommitDate'        => $repo->lastCommit->commit_author_date->format('Y-m-d H:i:s'),
-                        'lastCommitTimestamp'   => $repo->lastCommit->commit_author_date->getTimestamp(),
-                        'lastRelease'           => $repo->lastRelease ? $repo->lastRelease->name : null,
-                        'lastReleaseDate'       => $repo->lastRelease ? $repo->lastRelease->date->format('Y-m-d H:i:s') : null,
-                        'lastReleaseTimestamp'  => $repo->lastRelease ? $repo->lastRelease->date->getTimestamp() : null
-                    ];
-                });
+                ->get();
+
+            return (APIResource::collection($data))
+                ->additional([ 
+                    'last_updated' => $data->last()
+                        ->updated_at
+                        ->format('Y-m-d H:i:s') 
+                ]);
         });
     }
 }

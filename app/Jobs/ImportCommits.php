@@ -46,9 +46,10 @@ class ImportCommits extends Job
                 ->each(function($commit) {
                     LastCommit::updateOrCreate(
                         [
-                            'sha'                   => $commit['sha']
+                            'repository_id'         => $this->repo->id
                         ],
                         [
+                            'sha'                   => $commit['sha'],
                             'commit_author_name'    => $commit['commit']['author']['name'] ?? '',
                             'commit_author_date'    => (new DateTime($commit['commit']['author']['date']))->format('Y-m-d H:i:s') ?? '',
                             'commit_committer_name' => $commit['commit']['committer']['name'] ?? '',
@@ -56,7 +57,6 @@ class ImportCommits extends Job
                             'message'               => $commit['message'] ?? '',
                             'url'                   => $commit['url'] ?? '',
                             'repository_id'         => $this->repo->id,
-                            'created_at'            => \Carbon\Carbon::now(),
                             'updated_at'            => \Carbon\Carbon::now()
                         ]
                     );

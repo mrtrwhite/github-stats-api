@@ -13,7 +13,8 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        Commands\DispatchImports::class
+        Commands\DispatchImports::class,
+        Commands\DeploySite::class
     ];
 
     /**
@@ -24,6 +25,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        //
+        $schedule->command(Commands\DispatchImports::class)->twiceDaily(1, 13);
+        $schedule->command(Commands\DeploySite::class)->twiceDaily(2, 14);
     }
 }

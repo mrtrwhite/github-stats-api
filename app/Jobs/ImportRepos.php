@@ -52,7 +52,6 @@ class ImportRepos extends Job
                             'forks'                 => $repo['forks_count'],
                             'open_issues'           => $repo['open_issues'],
                             'language'              => $repo['language'] ?? '',
-                            'created_at'            => \Carbon\Carbon::now(),
                             'updated_at'            => \Carbon\Carbon::now()
                         ]
                     );
