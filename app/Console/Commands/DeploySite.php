@@ -34,18 +34,22 @@ class DeploySite extends Command {
         // assumed static site is in static dir & nvm and npm are installed
 
         $process = new Process(['git', 'pull', 'origin', 'master']);
+        $process->setTimeout(180);
         $process->setWorkingDirectory(base_path() . '/static');
         $process->run();
 
         $processTwo = new Process(['npm', 'install']);
+        $processTwo->setTimeout(180);
         $processTwo->setWorkingDirectory(base_path() . '/static');
         $processTwo->run();
         
         $processThree = new Process(['npm', 'install', '-g', 'gatsby']);
+        $processThree->setTimeout(180);
         $processThree->setWorkingDirectory(base_path() . '/static');
         $processThree->run();
         
         $processFour = new Process(['npm', 'run', 'deploy']);
+        $processFour->setTimeout(180);
         $processFour->setWorkingDirectory(base_path() . '/static');
         $processFour->run();
     }
