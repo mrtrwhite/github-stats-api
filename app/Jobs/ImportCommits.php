@@ -54,7 +54,7 @@ class ImportCommits extends Job
                             'commit_author_date'    => (new DateTime($commit['commit']['author']['date']))->format('Y-m-d H:i:s') ?? '',
                             'commit_committer_name' => $commit['commit']['committer']['name'] ?? '',
                             'commit_committer_date' => (new DateTime($commit['commit']['committer']['date']))->format('Y-m-d H:i:s') ?? '',
-                            'message'               => $commit['message'] ?? '',
+                            'message'               => $commit['commit']['message'] ?? '',
                             'url'                   => $commit['url'] ?? '',
                             'repository_id'         => $this->repo->id,
                             'updated_at'            => \Carbon\Carbon::now()

@@ -12,9 +12,9 @@ class APIResource extends JsonResource
             'name'                  => $this->full_name,
             'stars'                 => $this->stars,
             'forks'                 => $this->forks,
-            'lastCommit'            => $this->lastCommit->message,
-            'lastCommitDate'        => $this->lastCommit->commit_author_date->format('Y-m-d H:i:s'),
-            'lastCommitTimestamp'   => $this->lastCommit->commit_author_date->getTimestamp(),
+            'lastCommit'            => $this->lastCommit ? $this->lastCommit->message : null,
+            'lastCommitDate'        => $this->lastCommit ? $this->lastCommit->commit_author_date->format('Y-m-d H:i:s') : null,
+            'lastCommitTimestamp'   => $this->lastCommit ? $this->lastCommit->commit_author_date->getTimestamp() : null,
             'lastRelease'           => $this->lastRelease ? $this->lastRelease->name : null,
             'lastReleaseDate'       => $this->lastRelease ? $this->lastRelease->date->format('Y-m-d H:i:s') : null,
             'lastReleaseTimestamp'  => $this->lastRelease ? $this->lastRelease->date->getTimestamp() : null
