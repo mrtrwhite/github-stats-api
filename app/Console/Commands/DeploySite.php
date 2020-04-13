@@ -29,8 +29,6 @@ class DeploySite extends Command {
      */
     public function handle()
     {
-        Cache::forget('index');
-
         // run gh pages command in correct dir
     }
 }

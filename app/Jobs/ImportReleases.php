@@ -46,10 +46,10 @@ class ImportReleases extends Job
                     'repository_id'         => $this->repo->id
                 ],
                 [
-                    'github_id'             => $release['id'],
-                    'name'                  => $release['name'],
-                    'tag_name'              => $release['tag_name'],
-                    'url'                   => $release['url'],
+                    'github_id'             => $release['id'] ?? '',
+                    'name'                  => $release['name'] ?? '',
+                    'tag_name'              => $release['tag_name'] ?? '',
+                    'url'                   => $release['url'] ?? '',
                     'author_name'           => $release['author']['login'] ?? '',
                     'date'                  => (new DateTime($release['published_at']))->format('Y-m-d H:i:s') ?? '',
                     'repository_id'         => $this->repo->id,

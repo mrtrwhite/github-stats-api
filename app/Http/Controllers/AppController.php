@@ -24,18 +24,16 @@ class AppController extends Controller
 
     public function index()
     {                 
-        return Cache::remember('index', 360, function() {
-            $data = Repository::with(['lastCommit', 'lastRelease'])
-                ->orderBy('stars', 'DESC')
-                ->limit(1000)
-                ->get();
+        $data = Repository::with(['lastCommit', 'lastRelease'])
+            ->orderBy('stars', 'DESC')
+            ->limit(1000)
+            ->get();
 
-            return (APIResource::collection($data))
-                ->additional([ 
-                    'last_updated' => $data->last()
-                        ->updated_at
-                        ->format('Y-m-d H:i:s') 
-                ]);
-        });
+        return (APIResource::collection($data))
+            ->additional([ 
+                'last_updated' => $data->last()
+                    ->updated_at
+                    ->format('Y-m-d H:i:s') 
+            ]);
     }
 }
